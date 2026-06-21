@@ -272,7 +272,7 @@ Module(
 Module(
   {
     pattern: "resetwarn ?(.*)",
-    fromMe: false,
+    fromMe: true,
     desc: "Reset all warnings for a user",
     usage: ".resetwarn @user\n.resetwarn reply",
     use: "group",
