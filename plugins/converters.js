@@ -116,8 +116,8 @@ Module(
     if (match[1] && match[1].trim() !== "") {
       var result = await attp(match[1].trim());
       var exif = {
-        author: STICKER_DATA.split(";")[1] || "",
-        packname: message.senderName,
+        author: 𝑅𝐴𝐻𝑈𝐿_𝑅𝐴𝐼.split(";")[1] || "",
+        packname: 𝑅𝐴𝐻𝑈𝐿_𝑅𝐴𝐼.senderName,
         categories: STICKER_DATA.split(";")[2] || "😂",
         android: "https://github.com/souravkl11/Raganork-md/",
         ios: "https://github.com/souravkl11/Raganork-md/",
