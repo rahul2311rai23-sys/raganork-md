@@ -1,3 +1,6 @@
+const { Module } = require("../main");
+
+/* ---------------- TIME FORMAT ---------------- */
 function TimeCalculator(a) {
   let b = Math.floor(a / 31536e3),
     c = Math.floor((a % 31536e3) / 2628e3),
@@ -5,71 +8,89 @@ function TimeCalculator(a) {
     e = Math.floor((a % 86400) / 3600),
     f = Math.floor((a % 3600) / 60),
     g = Math.floor(a % 60);
+
   return (
-    (b > 0 ? b + (1 === b ? " year, " : " years, ") : "") +
-    (c > 0 ? c + (1 === c ? " month, " : " months, ") : "") +
-    (d > 0 ? d + (1 === d ? " day, " : " days, ") : "") +
-    (e > 0 ? e + (1 === e ? " hour, " : " hours, ") : "") +
-    (f > 0 ? f + (1 === f ? " minute " : " minutes, ") : "") +
-    (g > 0 ? g + (1 === g ? " second" : " seconds ") : "")
+    (b ? b + " years, " : "") +
+    (c ? c + " months, " : "") +
+    (d ? d + " days, " : "") +
+    (e ? e + " hours, " : "") +
+    (f ? f + " minutes, " : "") +
+    (g ? g + " seconds" : "")
   );
 }
-const { Module } = require("../main");
+
+/* ---------------- AGE COMMAND ---------------- */
 Module(
   {
     pattern: "age ?(.*)",
-    desc: "Age calculator .age dob",
+    desc: "Age calculator",
     use: "utility",
+    fromMe: false
   },
   async (m, t) => {
-    if (!t[1]) return await m.sendReply("_Give me your Date of Birth_");
+    if (!t[1]) return m.sendReply("_Give DOB: dd/mm/yyyy_");
+
     if (
       !/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/.test(t[1])
     )
-      return await m.sendReply("_Date must be in dd/mm/yy format_");
-    var DOB = t[1];
-    var actual = DOB.includes("-")
+      return m.sendReply("_Format must be dd/mm/yyyy_");
+
+    let DOB = t[1];
+    let actual = DOB.includes("-")
       ? DOB.split("-")[1] + "-" + DOB.split("-")[0] + "-" + DOB.split("-")[2]
       : DOB.split("/")[1] + "-" + DOB.split("/")[0] + "-" + DOB.split("/")[2];
-    var dob = new Date(actual).getTime();
-    var today = new Date().getTime();
-    var age = (today - dob) / 1000;
-    return await m.sendReply("```" + TimeCalculator(age) + "```");
+
+    let dob = new Date(actual).getTime();
+    let today = new Date().getTime();
+
+    let age = (today - dob) / 1000;
+
+    return m.sendReply("```" + TimeCalculator(age) + "```");
   }
 );
+
+/* ---------------- COUNTDOWN ---------------- */
 Module(
   {
     pattern: "cntd ?(.*)",
-    desc: "Counts Date",
+    desc: "Countdown to date",
     use: "utility",
+    fromMe: false
   },
   async (m, t) => {
-    if (!t[1]) return await m.sendReply("_Give me a future date!_");
-    if (
-      !/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/.test(t[1])
-    )
-      return await m.sendReply("_Date must be in dd/mm/yy format_");
-    var DOB = t[1];
-    var actual = DOB.includes("-")
+    if (!t[1]) return m.sendReply("_Give future date_");
+
+    let DOB = t[1];
+    let actual = DOB.includes("-")
       ? DOB.split("-")[1] + "-" + DOB.split("-")[0] + "-" + DOB.split("-")[2]
       : DOB.split("/")[1] + "-" + DOB.split("/")[0] + "-" + DOB.split("/")[2];
-    var dob = new Date(actual).getTime();
-    var today = new Date().getTime();
-    var age = (dob - today) / 1000;
-    return await m.sendReply("_" + TimeCalculator(age) + " remaining_");
+
+    let dob = new Date(actual).getTime();
+    let today = new Date().getTime();
+
+    let diff = (dob - today) / 1000;
+
+    return m.sendReply("_" + TimeCalculator(diff) + " remaining_");
   }
 );
+
+/* ---------------- PING ---------------- */
 Module(
   {
     pattern: "ping",
+    desc: "Check bot latency",
     use: "utility",
-    desc: "Measures ping",
+    fromMe: false
   },
-  async (message, match) => {
-    const start = process.hrtime();
-    let sent_msg = await message.sendReply("*❮ ᴛᴇsᴛɪɴɢ ᴘɪɴɢ ❯*");
-    const diff = process.hrtime(start);
-    const ms = (diff[0] * 1e3 + diff[1] / 1e6).toFixed(2);
-    await message.edit("*ʟᴀᴛᴇɴᴄʏ: " + ms + " _ᴍs_*", message.jid, sent_msg.key);
+  async (m) => {
+    const start = Date.now();
+    let msg = await m.sendReply("*Pinging...*");
+    const end = Date.now();
+
+    return m.edit(
+      "*Latency:* " + (end - start) + " ms",
+      m.jid,
+      msg.key
+    );
   }
 );
