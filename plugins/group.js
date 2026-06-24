@@ -616,7 +616,7 @@ Module(
 Module(
   {
     pattern: "common ?(.*)",
-    fromMe: false,
+    fromMe: true,
     use: "group",
     desc: "Get common participants in two groups, and kick using .common kick jid",
     usage: ".common jid1,jid2\n.common kick group_jid",
