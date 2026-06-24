@@ -217,14 +217,22 @@ Module(
     desc: "Get all bot variables",
     use: "owner",
   },
-  async (message, match) => {
+  async (message) => {
     try {
       let msg = "*All Bot Variables:*\n\n";
-      for (const key in config) {
-        if (!variables.find((v) => v.key === key)) {
-          msg += `*${key}*: ${config[key]}\n`;
-        }
+
+      for (const key of Object.keys(config)) {
+        msg += `*${key}*: ${config[key]}\n`;
       }
+
+      await message.sendReply(msg);
+    } catch (error) {
+      await message.sendReply(
+        `_Failed to fetch variables. Error: ${error.message}_`
+      );
+    }
+  }
+);
 
       await message.sendReply(msg);
     } catch (error) {
