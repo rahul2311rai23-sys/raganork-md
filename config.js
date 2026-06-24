@@ -94,11 +94,8 @@ const baseConfig = {
 
   ANTISPAM_COUNT: process.env.ANTISPAM_COUNT || "6/10",
 
-  AUTO_READ_STATUS:
-    convertToBool(process.env.AUTO_READ_STATUS) || false,
-
-  READ_MESSAGES:
-    convertToBool(process.env.READ_MESSAGES) || false,
+  AUTO_READ_STATUS: convertToBool(process.env.AUTO_READ_STATUS) || false,
+  READ_MESSAGES: convertToBool(process.env.READ_MESSAGES) || false,
 
   PMB_VAR: convertToBool(process.env.PMB_VAR) || false,
   DIS_PM: convertToBool(process.env.DIS_PM) || false,
@@ -109,8 +106,7 @@ const baseConfig = {
 
   PMB: process.env.PMB || "_Personal messages not allowed, BLOCKED!_",
 
-  READ_COMMAND:
-    convertToBool(process.env.READ_COMMAND) || true,
+  READ_COMMAND: process.env.READ_COMMAND === "true" || true,
 
   IMGBB_KEY: [
     "76a050f031972d9f27e329d767dd988f",
@@ -118,9 +114,7 @@ const baseConfig = {
     "78c84c62b32a88e86daf87dd509a657a",
   ],
 
-  RG:
-    process.env.RG ||
-    "919074309534-1632403322@g.us",
+  RG: process.env.RG || "919074309534-1632403322@g.us",
 
   BOT_INFO: process.env.BOT_INFO || "Raganork;Ryzen;default",
 
@@ -144,26 +138,22 @@ const baseConfig = {
 
   TAKE_KEY: process.env.TAKE_KEY || "",
 
-  CMD_REACTION:
-    convertToBool(process.env.CMD_REACTION) || false,
+  CMD_REACTION: convertToBool(process.env.CMD_REACTION) || false,
 
   MODE: process.env.MODE || "private",
 
   WARN: process.env.WARN || "4",
   ANTILINK_WARN: process.env.ANTILINK_WARN || "",
 
-  ANTI_DELETE:
-    convertToBool(process.env.ANTI_DELETE) || false,
+  ANTI_DELETE: convertToBool(process.env.ANTI_DELETE) || false,
 
   SUDO: process.env.SUDO || "",
   LANGUAGE: process.env.LANGUAGE || "english",
 
-  AUTO_UPDATE:
-    convertToBool(process.env.AUTO_UPDATE) || true,
+  AUTO_UPDATE: convertToBool(process.env.AUTO_UPDATE) || true,
 
   SUPPORT_GROUP:
-    process.env.SUPPORT_GROUP ||
-    "https://t.me/raganork_in",
+    process.env.SUPPORT_GROUP || "https://t.me/raganork_in",
 
   ACR_A: "ff489a0160188cf5f0750eaf486eee74",
   ACR_S: "ytu3AdkCu7fkRVuENhXxs9jsOW4YJtDXimAWMpJp",
@@ -195,6 +185,8 @@ const sequelize = (() => {
   });
 })();
 
-/* ---------------- EXPORT (IMPORTANT FIX) ---------------- */
+/* ---------------- IMPORTANT FIX ---------------- */
 
-module.exports = baseConfig;
+// 🔥 MUST be mutable for setvar system
+const config = baseConfig;
+module.exports = config;
