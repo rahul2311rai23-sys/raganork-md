@@ -622,10 +622,8 @@ Module(
     usage: ".common jid1,jid2\n.common kick group_jid",
   },
   async (message, match) => {
-    let adminAccesValidated = ADMIN_ACCESS
-      ? await isAdmin(message, message.sender)
-      : false;
-    if (message.fromOwner || adminAccesValidated) {
+    if (!message.fromOwner)
+  return await message.sendReply("_Owner only command_");
       if (!match[1])
         return await message.sendReply(
           "_*Need jids*_\n_*.common jid1,jid2*_\n _OR_ \n_*.common kick group_jid*_"
