@@ -222,8 +222,21 @@ Module(
       let msg = "*All Bot Variables:*\n\n";
 
       for (const key of Object.keys(config)) {
-        msg += `*${key}*: ${config[key]}\n`;
+        const value = config[key];
+
+        if (value !== undefined && typeof value !== "function") {
+          msg += `*${key}*: ${value}\n`;
+        }
       }
+
+      return await message.sendReply(msg);
+    } catch (error) {
+      return await message.sendReply(
+        `_Failed to fetch variables. Error: ${error.message}_`
+      );
+    }
+  }
+);
 
       await message.sendReply(msg);
     } catch (error) {
