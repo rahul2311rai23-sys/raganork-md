@@ -1,99 +1,46 @@
-const path = require("path");
-const fs = require("fs");
-if (fs.existsSync("./config.env")) {
-  require("dotenv").config({ path: "./config.env" });
-}
-
-const { suppressLibsignalLogs } = require("./core/helpers");
-
-suppressLibsignalLogs();
-
-const { initializeDatabase } = require("./core/database");
-const { BotManager } = require("./core/manager");
-const config = require("./config");
-const { SESSION, logger } = config;
-const http = require("http");
-const {
-  ensureTempDir,
-  TEMP_DIR,
-  initializeKickBot,
-  cleanupKickBot,
-} = require("./core/helpers");
-
-async function main() {
-  ensureTempDir();
-  logger.info(`Created temporary directory at ${TEMP_DIR}`);
-  console.log(`Raganork v${require("./package.json").version}`);
-  console.log(`- Configured sessions: ${SESSION.join(", ")}`);
-  logger.info(`Configured sessions: ${SESSION.join(", ")}`);
-  if (SESSION.length === 0) {
-    const warnMsg =
-      "⚠️ No sessions configured. Please set SESSION environment variable.";
-    console.warn(warnMsg);
-    logger.warn(warnMsg);
-    return;
+{
+  "name": "raganork-md",
+  "version": "6.2.30",
+  "description": "A multi functional wa bot.",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "pm2 start index.js --name raganork-md --attach"
+  },
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "baileys",
+    "raganork"
+  ],
+  "author": "Sourav K",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "@vitalets/google-translate-api": "^9.2.1",
+    "acrcloud": "^1.4.0",
+    "audio-decode": "^2.2.3",
+    "axios": "^1.9.0",
+    "baileys": "7.0.0-rc.8",
+    "browser-id3-writer": "^6.2.0",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.5.0",
+    "eventsource": "^4.0.0",
+    "file-type": "^21.0.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "google-tts-api": "^2.0.2",
+    "image-to-pdf": "^3.0.2",
+    "jimp": "0.16.0",
+    "node-cache": "^5.1.2",
+    "node-cron": "^4.1.1",
+    "node-webpmux": "^3.2.1",
+    "pg": "^8.16.0",
+    "pm2": "^6.0.8",
+    "qrcode-terminal": "^0.12.0",
+    "sequelize": "^6.37.7",
+    "simple-git": "^3.27.0",
+    "sqlite3": "^5.1.7",
+    "youtube-sr": "^4.3.11"
   }
-
-  try {
-    await initializeDatabase();
-    console.log("- Database initialized");
-    logger.info("Database initialized successfully.");
-  } catch (dbError) {
-    console.error(
-      "🚫 Failed to initialize database or load configuration. Bot cannot start.",
-      dbError
-    );
-    logger.fatal(
-      "🚫 Failed to initialize database or load configuration. Bot cannot start.",
-      dbError
-    );
-    process.exit(1);
-  }
-
-  const botManager = new BotManager();
-
-  const shutdownHandler = async (signal) => {
-    console.log(`\nReceived ${signal}, shutting down...`);
-    logger.info(`Received ${signal}, shutting down...`);
-    cleanupKickBot();
-    await botManager.shutdown();
-    process.exit(0);
-  };
-
-  process.on("SIGINT", () => shutdownHandler("SIGINT"));
-  process.on("SIGTERM", () => shutdownHandler("SIGTERM"));
-
-  await botManager.initializeBots();
-  console.log("- Bot initialization complete.");
-  logger.info("Bot initialization complete");
-
-  initializeKickBot();
-
-  const startServer = () => {
-    const PORT = process.env.PORT || 3000;
-
-    const server = http.createServer((req, res) => {
-      if (req.url === "/health") {
-        res.writeHead(200, { "Content-Type": "text/plain" });
-        res.end("OK");
-      } else {
-        res.writeHead(200, { "Content-Type": "text/plain" });
-        res.end("Raganork Bot is running!");
-      }
-    });
-
-    server.listen(PORT, () => {
-      logger.info(`Web server listening on port ${PORT}`);
-    });
-  };
-
-  if (process.env.USE_SERVER !== "false") startServer();
 }
 
-if (require.main === module) {
-  main().catch((error) => {
-    console.error(`Fatal error in main execution: ${error.message}`, error);
-    logger.fatal({ err: error }, `Fatal error in main execution`);
-    process.exit(1);
-  });
-}
+    
