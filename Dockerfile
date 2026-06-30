@@ -1,6 +1,6 @@
 FROM node:22-alpine
 
-# Zaroori tools install karna
+# Zaroori tools aur Python/Pip install karna
 RUN apk add --no-cache \
     git \
     ffmpeg \
@@ -20,9 +20,9 @@ WORKDIR /rgnk
 RUN mkdir -p temp
 ENV TZ=Asia/Kolkata
 
-# Node tools aur yt-dlp install karna
+# Node tools aur yt-dlp ka latest version install karna
 RUN npm install -g --force yarn pm2
-RUN pip install yt-dlp --break-system-packages
+RUN pip install -U yt-dlp --break-system-packages
 
 # Dependencies install karna
 RUN yarn install
