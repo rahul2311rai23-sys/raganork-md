@@ -1,26 +1,17 @@
 FROM node:22-alpine
 
-# Zaroori system dependencies
-RUN apk add --no-cache \
-    git \
-    ffmpeg \
-    libwebp-tools \
-    python3 \
-    py3-pip \
-    make \
-    g++
+# System dependencies
+RUN apk add --no-cache git ffmpeg libwebp-tools python3 py3-pip
 
-# Repo clone karein
-RUN git clone -b main https://github.com/souravkl11/raganork-md /rgnk
+# Working directory
 WORKDIR /rgnk
 
-# Environment setup
-ENV TZ=Asia/Kolkata
+# Copy files (Note: Aapko apne GitHub repo mein `package.json` file honi chahiye)
+RUN git clone -b main https://github.com/souravkl11/raganork-md .
 
-# Install dependencies (Ek-ek karke taaki error na ho)
-RUN npm install -g pm2
-RUN npm install --omit=dev
-RUN pip install -U yt-dlp --break-system-packages
+# Install dependencies in a memory-efficient way
+RUN npm install --omit=dev --no-audit --no-fund && \
+    pip install -U yt-dlp --break-system-packages
 
-# Bot start
-CMD ["pm2-runtime", "index.js"]
+# Start command
+CMD ["node", "index.js"]
