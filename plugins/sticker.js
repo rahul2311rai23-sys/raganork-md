@@ -1,12 +1,12 @@
 const { Module } = require("../main");
 const fs = require("fs");
-const { writeExif } = require("../lib/exif");
 const { exec } = require("child_process");
+const { writeExif } = require("../lib/exif");
 
 Module({
   pattern: "sticker",
   fromMe: false,
-  desc: "Convert image/video to sticker (HD)"
+  desc: "Convert image/video to sticker"
 }, async (message) => {
 
   if (!message.reply_message)
@@ -17,21 +17,29 @@ Module({
   let input = "./temp_input";
   let output = "./temp_output.webp";
 
-  fs.writeFileSync(input, media);
+  // SAFE BUFFER FIX (important)
+  let buffer = Buffer.isBuffer(media)
+    ? media
+    : Buffer.from(media, "base64");
 
-  // ffmpeg conversion (quality boost)
+  fs.writeFileSync(input, buffer);
+
+  // FFmpeg conversion (stable + HD)
   await new Promise((resolve, reject) => {
-    exec(`ffmpeg -i ${input} -vf "scale=512:512:force_original_aspect_ratio=decrease,fps=15" -vcodec libwebp -quality 80 -preset default -an -vsync 0 ${output}`, 
-    (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
+    exec(
+      `ffmpeg -y -i ${input} -vf "scale=512:512:force_original_aspect_ratio=decrease,fps=15" -vcodec libwebp -lossless 1 -qscale 80 -preset default -an ${output}`,
+      (err) => {
+        if (err) return reject(err);
+        resolve();
+      }
+    );
   });
 
-  let sticker = fs.readFileSync(output);
+  let stickerBuffer = fs.readFileSync(output);
 
-  let finalSticker = await writeExif(sticker, {
-    packname: "⚡ Raganork Stickers",
+  // EXIF (packname fix)
+  let finalSticker = await writeExif(stickerBuffer, {
+    packname: "⚡ Queen Riam",
     author: message.pushName || "User"
   });
 
@@ -39,6 +47,7 @@ Module({
     mimetype: "image/webp"
   });
 
+  // cleanup
   fs.unlinkSync(input);
   fs.unlinkSync(output);
 
